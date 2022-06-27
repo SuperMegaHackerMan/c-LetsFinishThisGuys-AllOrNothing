@@ -18,6 +18,7 @@ namespace MarketLib.src.StoreNS
         public Inventory()
         {
             products = new Dictionary<Product, int>();
+            idpatcher = 1;
         }
 
         private string toString()
@@ -51,7 +52,7 @@ namespace MarketLib.src.StoreNS
                     if (searchItemByName(name).Count != 0 && searchItemByCategory(category).Count !=0)
                         throw new Exception("item already exists");
                 products.Add(new Product(this.idpatcher, name, price, category, 0), amount);
-                return idpatcher;
+                return idpatcher++;
 
             }
         }

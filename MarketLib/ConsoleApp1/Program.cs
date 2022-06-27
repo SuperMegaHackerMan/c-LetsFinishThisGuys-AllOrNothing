@@ -68,7 +68,8 @@ namespace ConsoleApp1
             ICollection<Store> stores = ms.StoresInfo();
             Console.WriteLine("created dans store");
 
-            ms.addProductToStore("dan", dans_store_id, "halav", "dairy", "expired", 420, 3);
+            int first_product = ms.addProductToStore("dan", dans_store_id, "halav", "dairy", "expired", 2, 3);
+
             Console.WriteLine("added product to dans store");
 
             foreach (Store s in stores) {
@@ -77,6 +78,9 @@ namespace ConsoleApp1
                     Console.WriteLine("Product name: "+ p.ProductName+", Product price: "+p.Price);
                 }
             }
+
+            ms.addItemToBasket(conId2, dans_store_id, first_product, 1);
+            Console.WriteLine("added item ");
 
             Console.WriteLine("\nfinished printing stores & products");
 

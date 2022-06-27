@@ -257,12 +257,12 @@ namespace MarketLib.src.MarketSystemNS
         /// <param name="subCategory"></param>
         /// <param name="quantity"></param>
         /// <param name="price"></param>
-        public void addProductToStore(string username, int storeId, string productName, string category, string subCategory,
+        public int addProductToStore(string username, int storeId, string productName, string category, string subCategory,
          int quantity, double price)
         {
             Subscriber user = getSubscriberByUserName(username);
             Store s = stores[storeId];
-            user.addStoreItem(s, productName, category, subCategory, quantity, price);
+            return user.addStoreItem(s, productName, category, subCategory, quantity, price);
         }
 
 
