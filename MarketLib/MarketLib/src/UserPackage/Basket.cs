@@ -15,7 +15,7 @@ namespace MarketLib.src.UserP
 
         public Dictionary<Product, int> Products { get => products; set => products = value; }
 
-        public Basket(int storeid, ConcurrentDictionary<Product, int> profucts)
+        public Basket(int storeid, ConcurrentDictionary<Product, int> products)
         {
             this.storeid = storeid;
             this.products = products;

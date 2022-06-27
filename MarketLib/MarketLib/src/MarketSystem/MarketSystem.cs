@@ -152,8 +152,7 @@ namespace MarketLib.src.MarketSystemNS
         }
 
         /// <summary>
-        /// update a product amount in a specific store basket.
-        /// </summary>
+        /// update a product amount in a specific store basket.        /// </summary>
         /// <param name="userID"></param>
         /// <param name="storeId"></param>
         /// <param name="productId"></param>
