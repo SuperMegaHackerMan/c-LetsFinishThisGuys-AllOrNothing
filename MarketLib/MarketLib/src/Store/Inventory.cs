@@ -52,7 +52,6 @@ namespace MarketLib.src.StoreNS
                         throw new Exception("item already exists");
                 products.Add(new Product(this.idpatcher, name, price, category, 0), amount);
                 return idpatcher;
-
             }
         }
 

@@ -97,10 +97,6 @@ namespace MarketLib.src.StoreNS
             return this.inventory.addProduct(name, price, category, amount);
         }
 
-
-
-
-
         public Product getItem(string name, string category, string subCategory)
         {
             return this.inventory.getItem(name, category, subCategory);
