@@ -24,14 +24,14 @@ namespace ConsoleApp1
             //StorePermission perm1 = new ManagerPermission(store);
             //StorePermission perm2 = new OwnerPermission(store);
             //Console.WriteLine(perm1.Equals(perm2));
-
-            //testing purchases.
-            // 1. dan store owner pavel buys 1 apple // GOOD CASE
-            // 2. dan store owner pavel buys 2 apple // BAD CASE
+            Console.WriteLine("starting test");
             ConcurrentDictionary<Product, int> products1 = new ConcurrentDictionary<Product, int>();
             ConcurrentDictionary<Product, int> products2 = new ConcurrentDictionary<Product, int>();
-            // 1 halav in store2 (dan)
-            products2.TryAdd(new Product(1,"halav",5.0,"dairy",10.0), 1);
+            Console.WriteLine("added product dictionaries");
+
+            products1.TryAdd(new Product(1,"halav",5.0,"dairy",10.0), 3);
+            products1.TryAdd(new Product(2,"betzim",7.0,"dairy",10.0), 4);
+            products2.TryAdd(new Product(1,"halav",5.0,"dairy",10.0), 3);
 
 
             Basket b1 = new Basket(store.getId(), products1);
@@ -41,6 +41,7 @@ namespace ConsoleApp1
             ConcurrentDictionary<int, Basket> baskets1 = new ConcurrentDictionary<int, Basket>();
             ConcurrentDictionary<int, Basket> baskets2 = new ConcurrentDictionary<int, Basket>();
             Console.WriteLine("created concurrentDicts");
+
 
             baskets1.TryAdd(1, b1);
             baskets2.TryAdd(1, b2);
@@ -52,6 +53,7 @@ namespace ConsoleApp1
 
             MarketSystem ms = new MarketSystem();
             Console.WriteLine("created marketSystem");
+            
             var conId1 = ms.connect();
             var conId2 = ms.connect();
 
@@ -66,7 +68,8 @@ namespace ConsoleApp1
             ICollection<Store> stores = ms.StoresInfo();
             Console.WriteLine("created dans store");
 
-            ms.addProductToStore("dan", dans_store_id, "halav", "dairy", "expired", 1, 3);
+            int first_product = ms.addProductToStore("dan", dans_store_id, "halav", "dairy", "expired", 2, 3);
+
             Console.WriteLine("added product to dans store");
 
             foreach (Store s in stores) {
@@ -75,6 +78,10 @@ namespace ConsoleApp1
                     Console.WriteLine("Product name: "+ p.ProductName+", Product price: "+p.Price);
                 }
             }
+
+            ms.addItemToBasket(conId2, dans_store_id, first_product, 1);
+            Console.WriteLine("added item ");
+
             Console.WriteLine("\nfinished printing stores & products");
 
             Console.WriteLine("finished test");
