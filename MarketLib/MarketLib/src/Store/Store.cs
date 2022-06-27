@@ -35,13 +35,13 @@ namespace MarketLib.src.StoreNS
          *                    //  * @param founder - the fonder of the new store
          * @throws WrongNameException
          */
-        public Store(int id, string name, string UserName)
+        public Store(int id, string name, string UserName, string description="default shop desc")
         {//, Observable observable) {
             if (name == null || name.Equals("") || name.Trim().Equals(""))
                 throw new Exception("WrongNameException: store name is null or contains only white spaces");
             if (name.ToCharArray()[0] >= '0' && name.ToCharArray()[0] <= '9')
                 throw new Exception("WrongNameException : store name cannot start with a number");
-            if (description == null || description.Contains("") || description.Trim().Equals(""))
+            if (description == null || description.Trim().Equals(""))
                 throw new Exception("WrongNameException :  store description is null or contains only white spaces");
             // if (description.ToCharArray()[0] >= '0' && description.ToCharArray()[0] <= '9')
             //   throw new Exception( "WrongNameException: store description cannot start with a number");
@@ -62,6 +62,10 @@ namespace MarketLib.src.StoreNS
         {
             return name;
         }
+
+        public void setDescription(string newDesc) {
+            this.description = newDesc;
+        }                                                  
 
         public String getDescription()
         {

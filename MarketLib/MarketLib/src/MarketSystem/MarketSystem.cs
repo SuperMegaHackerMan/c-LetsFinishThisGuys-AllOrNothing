@@ -23,7 +23,7 @@ namespace MarketLib.src.MarketSystemNS
         private ConcurrentDictionary<int, Store> stores; // key: store id
         private int storeCounter = 0;
         private ItemSearchManager search = new ItemSearchManager();
-        private UserSecurity usersecure;
+        private UserSecurity usersecure = new UserSecurity();
         private int storeIdCounter = 0;
         private int counterId = 0;
         private PaymentSystem payment;
@@ -73,13 +73,14 @@ namespace MarketLib.src.MarketSystemNS
                 members[username] = member;
                 usersecure.storeUser(username, password);
             }
+
         }
 
         //when a user logs in we return his username to use as an identifier
         //when we will have a data base this will maybe look al different.
         public string login(string connection, string username, string password)
         {
-            if (connections[connection] != null)
+            if (connections.ContainsKey(connection) && members.ContainsKey(username))
             {
                 usersecure.verifyUser(username, password); //verify user info 
                 connections[connection] = members[username]; //with thgis we can use the user key to attain access to a memeber.
@@ -220,6 +221,7 @@ namespace MarketLib.src.MarketSystemNS
         {
             Subscriber user = getSubscriberByUserName(username);
             Store newStore = new Store(storeCounter, newStoreName, username);
+            user.addOwnerPermission(newStore);
             stores.TryAdd(storeCounter,newStore);
             int current = storeCounter;
             Interlocked.Increment(ref storeCounter);

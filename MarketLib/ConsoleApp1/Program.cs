@@ -3,8 +3,9 @@ using MarketLib.src.StoreNS;
 using MarketLib.src.UserP;
 using MarketLib.src.MarketSystemNS;
 using System;
-using System.Collections.Concurrent;
+using System.Collections;
 using System.Collections.Generic;
+
 namespace ConsoleApp1
 {
     class Program
@@ -19,7 +20,7 @@ namespace ConsoleApp1
             //Console.WriteLine(s.handshake());
             //Address add = new Address("poop", "poop", "poop", "poop", "poop");
             //Console.WriteLine(s.deliver(add));
-            //Store store = new Store();
+            Store store = new Store();
             //StorePermission perm1 = new ManagerPermission(store);
             //StorePermission perm2 = new OwnerPermission(store);
             //Console.WriteLine(perm1.Equals(perm2));
@@ -28,9 +29,9 @@ namespace ConsoleApp1
             ConcurrentDictionary<Product, int> products2 = new ConcurrentDictionary<Product, int>();
             Console.WriteLine("added product dictionaries");
 
-            products1.AddOrUpdate(new Product(1,"halav",5.0,"dairy",10.0), 3);
-            products1.AddOrUpdate(new Product(2,"betzim",7.0,"dairy",10.0), 4);
-            products2.AddOrUpdate(new Product(1,"halav",5.0,"dairy",10.0), 3);
+            products1.TryAdd(new Product(1,"halav",5.0,"dairy",10.0), 3);
+            products1.TryAdd(new Product(2,"betzim",7.0,"dairy",10.0), 4);
+            products2.TryAdd(new Product(1,"halav",5.0,"dairy",10.0), 3);
 
 
             Basket b1 = new Basket(store.getId(), products1);
@@ -42,8 +43,8 @@ namespace ConsoleApp1
             Console.WriteLine("created concurrentDicts");
 
 
-            baskets1.AddOrUpdate(1, b1);
-            baskets2.AddOrUpdate(1, b2);
+            baskets1.TryAdd(1, b1);
+            baskets2.TryAdd(1, b2);
             Console.WriteLine("wrapped baskets in concurrentDicts");
 
             User pavel = new User(baskets1);
@@ -53,26 +54,30 @@ namespace ConsoleApp1
             MarketSystem ms = new MarketSystem();
             Console.WriteLine("created marketSystem");
             
-            ms.register("connectionId1","pavel","pavelpass");
-            ms.register("connectionId2","dan","danpass");
+            var conId1 = ms.connect();
+            var conId2 = ms.connect();
+
+            ms.register(conId1,"pavel","pavelpass");
+            ms.register(conId2,"dan","danpass");
             Console.WriteLine("registered users");
 
-            ms.login("connectionId1","pavel","pavelpass");
-            ms.login("connectionId2","dan","danpass");
+            ms.login(conId1,"pavel","pavelpass");
+            ms.login(conId2,"dan","danpass");
             Console.WriteLine("logged in users");
-
             int dans_store_id = ms.openNewStore("dan", "dans awesome store");
+            ICollection<Store> stores = ms.StoresInfo();
             Console.WriteLine("created dans store");
 
             ms.addProductToStore("dan", dans_store_id, "halav", "dairy", "expired", 420, 3);
             Console.WriteLine("added product to dans store");
-            ICollection<Store> stores = ms.StoresInfo();
+
             foreach (Store s in stores) {
                 Console.WriteLine("\nStore: "+s.getName()+", Products: ");
-                foreach (Product p in s.getInventory().Products) {
+                foreach (Product p in s.getInventory().Products.Keys) {
                     Console.WriteLine("Product name: "+ p.ProductName+", Product price: "+p.Price);
                 }
             }
+
             Console.WriteLine("\nfinished printing stores & products");
 
             Console.WriteLine("finished test");
