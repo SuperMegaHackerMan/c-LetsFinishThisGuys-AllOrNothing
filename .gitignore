@@ -1,3 +1,5 @@
+.gitignore
 *
+*.vs/
 !MarketLib/MarketLib/src/*
 !MarketLib/ConsoleApp1/Program.cs
