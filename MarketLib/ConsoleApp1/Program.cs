@@ -87,9 +87,9 @@ namespace ConsoleApp1
             foreach (Store s in stores) {
                 Console.WriteLine("\nStore: "+s.getName()+", Products: ");
                 Console.WriteLine(s.toString());
-                
             }
 
+            //Console.WriteLine("this" + stores[0]);
             ms.addItemToBasket(conId2, dans_store_id, first_product, 1);
             ms.purchaseCart(conId2);
             Console.WriteLine("purchased dans cart again");
