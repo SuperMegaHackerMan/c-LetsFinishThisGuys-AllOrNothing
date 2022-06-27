@@ -4,6 +4,7 @@ using MarketLib.src.PurchasePolicies;
 using MarketLib.src.UserP;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,8 @@ namespace MarketLib.src.StoreNS
         private double rating;
         private string founderUserName;
         private bool isActive;
+        private int managerCounter;
+        private ConcurrentDictionary<int, User> managers;
         private Inventory inventory = new Inventory();
         private ArrayList purchases = new ArrayList(); // arrayList<string> : purcheses
                                                        //private Observable observable;
@@ -50,7 +53,14 @@ namespace MarketLib.src.StoreNS
             this.description = description;
             this.rating = 0;
             this.founderUserName = UserName;
+            this.managers = new ConcurrentDictionary<int, User>();
+            this.managerCounter = 0;
             //this.observable = observable;
+        }
+
+        public void addManager(User u) {
+            managers.TryAdd(managerCounter, u);
+            this.managerCounter = this.managerCounter + 1;
         }
 
         public int getId()

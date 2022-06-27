@@ -257,6 +257,26 @@ namespace MarketLib.src.MarketSystemNS
         /// <param name="subCategory"></param>
         /// <param name="quantity"></param>
         /// <param name="price"></param>
+        /// 
+
+        // start bid functionality
+
+            // For 28.06: 
+            // 1. finish acceptBidAsManager, declineBidAsMAnager, counterOfferAsManager, acceptCounterOfferAsBuyer, declineCounterOfferAsBuyr
+            // 2. build the approval functionality, where everyone needs to accept so bid will be approved.
+            // 3. Testing 
+            // 4. Git and it is finished
+        public void acceptBidAsManager(string connectionId, string storeId, string product_name, double price, string category, string subcat){
+            User u = getUserByConnectionId(connectionId);
+            Store s = stores[storeId];
+            Product p = s.getItem(product_name,category,subcat);
+
+            // finish this function
+
+        }   
+
+        // end bid functionality
+
         public int addProductToStore(string username, int storeId, string productName, string category, string subCategory,
          int quantity, double price)
         {
