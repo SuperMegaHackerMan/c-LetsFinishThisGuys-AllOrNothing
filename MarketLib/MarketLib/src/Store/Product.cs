@@ -35,6 +35,9 @@ namespace MarketLib.src.StoreNS
         {
         }
 
+        public override string ToString(){ 
+            return "\tProduct name: "+pName+", price: "+price;
+        }
 
         public int ProductId
         {

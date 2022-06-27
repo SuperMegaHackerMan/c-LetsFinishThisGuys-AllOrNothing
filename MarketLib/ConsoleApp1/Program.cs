@@ -74,13 +74,31 @@ namespace ConsoleApp1
 
             foreach (Store s in stores) {
                 Console.WriteLine("\nStore: "+s.getName()+", Products: ");
-                foreach (Product p in s.getInventory().Products.Keys) {
-                    Console.WriteLine("Product name: "+ p.ProductName+", Product price: "+p.Price);
-                }
+                Console.WriteLine(s.toString());
+                
             }
 
             ms.addItemToBasket(conId2, dans_store_id, first_product, 1);
-            Console.WriteLine("added item ");
+            Console.WriteLine("added item halav from dans store to user dan's basket");
+
+            ms.purchaseCart(conId2);
+            Console.WriteLine("purchased cart for connection "+conId2);
+
+            foreach (Store s in stores) {
+                Console.WriteLine("\nStore: "+s.getName()+", Products: ");
+                Console.WriteLine(s.toString());
+                
+            }
+
+            ms.addItemToBasket(conId2, dans_store_id, first_product, 1);
+            ms.purchaseCart(conId2);
+            Console.WriteLine("purchased dans cart again");
+
+            foreach (Store s in stores) {
+                Console.WriteLine("\nStore: "+s.getName()+", Products: ");
+                Console.WriteLine(s.toString());
+                
+            }
 
             Console.WriteLine("\nfinished printing stores & products");
 
