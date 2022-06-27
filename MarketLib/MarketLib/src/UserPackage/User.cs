@@ -32,7 +32,7 @@ namespace MarketLib.src.UserP
         public Basket getBasket(int storeid)
         {
 
-            if (baskets[storeid] != null)
+            if (baskets.ContainsKey(storeid) && baskets[storeid] != null)
             {
                 return baskets[storeid];
             }
