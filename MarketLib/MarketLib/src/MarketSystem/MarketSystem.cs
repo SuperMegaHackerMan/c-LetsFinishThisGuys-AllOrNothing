@@ -188,6 +188,7 @@ namespace MarketLib.src.MarketSystemNS
                     totalprice += store_total;
                     PurchaseRecord purchaseDetails = new PurchaseRecord(user.getBasket(store.getId()).Products, DateTime.Now.ToString("dd-MM-yyyy"), store_total);
                 }
+                user.clearBaskets();
             }
             catch
             {
