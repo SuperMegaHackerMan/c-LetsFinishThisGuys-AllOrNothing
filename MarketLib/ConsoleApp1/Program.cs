@@ -2,7 +2,9 @@
 using MarketLib.src.StoreNS;
 using MarketLib.src.UserP;
 using MarketLib.src.MarketSystemNS;
-
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 namespace ConsoleApp1
 {
     class Program
@@ -64,10 +66,9 @@ namespace ConsoleApp1
 
             ms.addProductToStore("dan", dans_store_id, "halav", "dairy", "expired", 420, 3);
             Console.WriteLine("added product to dans store");
-
             ICollection<Store> stores = ms.StoresInfo();
             foreach (Store s in stores) {
-                Console.WriteLine("\nStore: "+s.getName+", Products: ");
+                Console.WriteLine("\nStore: "+s.getName()+", Products: ");
                 foreach (Product p in s.getInventory().Products) {
                     Console.WriteLine("Product name: "+ p.ProductName+", Product price: "+p.Price);
                 }
