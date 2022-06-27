@@ -80,7 +80,13 @@ namespace MarketLib.src.UserP
 
             lock (permissions)
             {
-                return permissions.Contains(permission);
+                foreach(StorePermission.StorePermission perm in permissions)
+                {
+                   if(permission.Equals(perm) ){
+                        return true;
+                    }
+                }
+                return false;
             }
         }
         //

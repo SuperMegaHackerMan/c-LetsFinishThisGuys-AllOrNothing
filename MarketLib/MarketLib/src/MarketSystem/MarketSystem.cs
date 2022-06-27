@@ -222,6 +222,7 @@ namespace MarketLib.src.MarketSystemNS
         {
             Subscriber user = getSubscriberByUserName(username);
             Store newStore = new Store(storeCounter, newStoreName, username);
+            user.addOwnerPermission(newStore);
             stores.TryAdd(storeCounter,newStore);
             int current = storeCounter;
             Interlocked.Increment(ref storeCounter);

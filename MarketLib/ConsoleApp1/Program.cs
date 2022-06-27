@@ -64,21 +64,20 @@ namespace ConsoleApp1
             ms.login(conId1,"pavel","pavelpass");
             ms.login(conId2,"dan","danpass");
             Console.WriteLine("logged in users");
-
             int dans_store_id = ms.openNewStore("dan", "dans awesome store");
-            stores.
+            ICollection<Store> stores = ms.StoresInfo();
             Console.WriteLine("created dans store");
 
             ms.addProductToStore("dan", dans_store_id, "halav", "dairy", "expired", 420, 3);
             Console.WriteLine("added product to dans store");
 
-            ICollection<Store> stores = ms.StoresInfo();
             foreach (Store s in stores) {
                 Console.WriteLine("\nStore: "+s.getName()+", Products: ");
                 foreach (Product p in s.getInventory().Products.Keys) {
                     Console.WriteLine("Product name: "+ p.ProductName+", Product price: "+p.Price);
                 }
             }
+
             Console.WriteLine("\nfinished printing stores & products");
 
             Console.WriteLine("finished test");
