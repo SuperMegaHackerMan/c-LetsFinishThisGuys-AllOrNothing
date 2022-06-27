@@ -21,13 +21,12 @@ namespace MarketLib.src.StoreNS
             idpatcher = 1;
         }
 
-        private string toString()
+        public string toString()
         {
             string s = "";
-            var set = products.Keys;
-            foreach (var key in set)
+            foreach (var p in products)
             {
-                s = s + key.ToString() + '\n';
+                s = s + p.Key.ToString() + ", amount: " + p.Value.ToString() + '\n';
             }
             return s;
         }
@@ -133,7 +132,7 @@ namespace MarketLib.src.StoreNS
             lock (this.products)
             {
                 var am = searchItem(itemId);
-                products.Add(am, amount);
+                products[am]= amount;
             }
 
         }

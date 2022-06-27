@@ -147,7 +147,7 @@ namespace MarketLib.src.StoreNS
 
         public string toString()
         {
-            return inventory.ToString();
+            return inventory.toString();
         }
 
         public void changeItem(int itemID, int newQuantity, double newPrice)
