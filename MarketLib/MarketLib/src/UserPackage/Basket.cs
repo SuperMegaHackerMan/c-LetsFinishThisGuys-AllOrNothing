@@ -11,9 +11,9 @@ namespace MarketLib.src.UserP
     public class Basket
     {
         private int storeid;
-        private Dictionary<Product, int> products; // product and quantitiy.
+        private ConcurrentDictionary<Product, int> products; // product and quantitiy.
 
-        public Dictionary<Product, int> Products { get => products; set => products = value; }
+        public ConcurrentDictionary<Product, int> Products { get => products; set => products = value; }
 
         public Basket(int storeid, ConcurrentDictionary<Product, int> products)
         {
@@ -56,7 +56,7 @@ namespace MarketLib.src.UserP
 
         public void removeProduct(Product p)
         {
-            products.Remove(p);
+            products.TryRemove(p,out _);
         }
 
     }

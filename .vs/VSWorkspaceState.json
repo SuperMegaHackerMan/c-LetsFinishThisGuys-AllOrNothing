@@ -1,8 +1,14 @@
 {
   "ExpandedNodes": [
     "",
-    "\\MarketLib"
+    "\\MarketLib",
+    "\\MarketLib\\ConsoleApp1",
+    "\\MarketLib\\MarketLib",
+    "\\MarketLib\\MarketLib\\src",
+    "\\MarketLib\\MarketLib\\src\\MarketSystem",
+    "\\MarketLib\\MarketLib\\src\\Service",
+    "\\MarketLib\\MarketLib\\src\\UserPackage"
   ],
-  "SelectedNode": "\\MarketLib",
+  "SelectedNode": "\\MarketLib\\ConsoleApp1\\Program.cs",
   "PreviewInSolutionExplorer": false
 }
