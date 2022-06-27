@@ -40,6 +40,10 @@ namespace MarketLib.src.UserP
             return baskets[storeid];
         }
 
+        public void clearBaskets() {
+            this.baskets.Clear();
+        }
+
         public ConcurrentDictionary<int, Basket> getCart()
         {
             return baskets;

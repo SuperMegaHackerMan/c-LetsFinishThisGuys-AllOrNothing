@@ -21,6 +21,16 @@ namespace MarketLib.src.UserP
             this.products = products;
         }
 
+        public string toString()
+        {
+            string s = "";
+            foreach (var p in products)
+            {
+                s = s + p.Key.ToString() + ", amount: " + p.Value.ToString() + '\n';
+            }
+            return s;
+        }
+
         public int getStore()
         {
             return storeid;
