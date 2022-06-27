@@ -32,5 +32,12 @@ namespace MarketLib.src.StorePermission
                 
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+
+
     }
 }

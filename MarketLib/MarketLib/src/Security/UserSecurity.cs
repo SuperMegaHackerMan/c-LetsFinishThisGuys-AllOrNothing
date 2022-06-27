@@ -11,7 +11,7 @@ namespace MarketLib.src.Security
 {
     class UserSecurity
     {
-        private ConcurrentDictionary<string, string> userRecords;
+        private ConcurrentDictionary<string, string> userRecords = new ConcurrentDictionary<string, string>();
 
         //will store the user info into the userrecords
         public void storeUser(string username, string password)
@@ -31,6 +31,8 @@ namespace MarketLib.src.Security
         //pre-condition: username already exists.
         public void verifyUser(string username, string password)
         {
+            if (!userRecords.ContainsKey(username))
+                return;
             /* Fetch the stored value */
             string savedPasswordHash = userRecords[username];
             /*      Extract the bytes */
