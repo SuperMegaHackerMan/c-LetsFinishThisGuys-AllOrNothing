@@ -96,7 +96,7 @@ namespace ConsoleApp1
                 Console.WriteLine("\n# Store: "+s.getName()+", Products: ");
                 Console.WriteLine(s.toString());
             }
-            
+
 
 
             Console.WriteLine("\nfinished printing stores & products");
