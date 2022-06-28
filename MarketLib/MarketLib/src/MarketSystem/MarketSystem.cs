@@ -3,7 +3,6 @@ using MarketLib.src.ExternalService.Payment;
 using MarketLib.src.ExternalService.Supply;
 using MarketLib.src.Security;
 using MarketLib.src.StoreNS;
-
 using MarketLib.src.UserP;
 using System;
 using System.Collections.Concurrent;
@@ -21,6 +20,8 @@ namespace MarketLib.src.MarketSystemNS
         private ConcurrentDictionary<string, User> connections;
         private ConcurrentDictionary<string, Subscriber> members;
         private ConcurrentDictionary<int, Store> stores; // key: store id
+        private ConcurrentDictionary<int, Bid> bids; // key: bidCounter
+        private int bidCounter = 0;
         private int storeCounter = 0;
         private ItemSearchManager search = new ItemSearchManager();
         private UserSecurity usersecure = new UserSecurity();
@@ -266,13 +267,32 @@ namespace MarketLib.src.MarketSystemNS
             // 2. build the approval functionality, where everyone needs to accept so bid will be approved.
             // 3. Testing 
             // 4. Git and it is finished
-        public void acceptBidAsManager(string connectionId, string storeId, string product_name, double price, string category, string subcat){
+
+        public void bidOnItemAsBuyer(string connectionId, string storeId, string product_name, double price, string category, string subcat) {
+            if (price < 0 || stores[storeId] == null || members[connectionId] == null)
+                return;
+
             User u = getUserByConnectionId(connectionId);
             Store s = stores[storeId];
             Product p = s.getItem(product_name,category,subcat);
 
-            // finish this function
+            Bid b = new Bid(s,p,price,connectionId);
 
+            bids.TryAdd(bidCounter,b);
+            this.bidCounter = this.bidCounter + 1;
+
+        }
+
+        public void acceptBidAsManager(string connectionId, int bidId){ // bidId is the int in the <int, Bid> dictionary (bids).
+            User manager = getUserByConnectionId(connectionId);
+
+            Bid b = bids[bidId];
+
+            Store related_store_to_bid = b.getRelatedStore();
+
+
+
+            // Check if connectionId belongs to an actual manager of the stores
         }   
 
         // end bid functionality

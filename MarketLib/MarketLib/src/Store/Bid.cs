@@ -16,15 +16,18 @@ namespace MarketLib.src.StoreNS
         public Boolean isAccepted;
         public string related_user_id;
         public Boolean isOpen;
+        public int numberOfAccepts;
 
         public Bid(Store store, Product related_product, double price, string related_user_id)
         {
-            // created by buyer
+            // bid is firstly created by buyer
             this.related_product = related_product;
             this.currrent_price = price;
             this.related_user_id = related_user_id;
             this.isOpen = true;
         }
+
+        public Bid() { }
 
         // 1. manager functionality:
 
@@ -66,6 +69,11 @@ namespace MarketLib.src.StoreNS
         {
             this.isAccepted = false;
             this.isOpen = false;
+        }
+
+        public Store getRelatedStore()
+        {
+            return related_store;
         }
 
     }
