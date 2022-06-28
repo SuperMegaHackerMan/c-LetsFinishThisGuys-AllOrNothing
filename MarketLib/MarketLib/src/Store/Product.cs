@@ -14,6 +14,8 @@ namespace MarketLib.src.StoreNS
         private double price;
         private Review review;
         private int storeid;
+        private string typeOfSale;
+        public bool isOnlyForBids;
 
 
         private string category;
@@ -22,13 +24,15 @@ namespace MarketLib.src.StoreNS
         private double rating;
         private bool Opened = true;
 
-        public Product(int pid, string name, double price, string category, double rating)
+        public Product(int pid, string name, double price, string category, double rating, bool isOnlyForBids = false)
         {
             this.pId = pid;
             this.pName = name;
             this.price = price;
             this.category = category;
             this.rating = rating;
+            this.isOnlyForBids = isOnlyForBids;
+            
         }
 
         public Product()
@@ -36,7 +40,7 @@ namespace MarketLib.src.StoreNS
         }
 
         public override string ToString(){ 
-            return "\tProduct name: "+pName+", price: "+price;
+            return "\tProduct name: "+pName+", price: "+price+"";
         }
 
         public int ProductId

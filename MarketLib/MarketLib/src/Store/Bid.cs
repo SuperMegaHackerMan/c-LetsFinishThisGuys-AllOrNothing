@@ -13,16 +13,17 @@ namespace MarketLib.src.StoreNS
         public Store related_store;
         public double currrent_price;
         public Boolean isAccepted;
-        public string related_user_id;
+        public string bidder_username;
         public Boolean isOpen;
         public int numberOfAccepts;
 
-        public Bid(Store store, Product related_product, double price, string related_user_id)
+        public Bid(Store related_store, Product related_product, double price, string bidder_username)
         {
             // bid is firstly created by buyer
             this.related_product = related_product;
             this.currrent_price = price;
-            this.related_user_id = related_user_id;
+            this.bidder_username = bidder_username;
+            this.related_store = related_store;
             this.isOpen = true;
         }
 
@@ -30,16 +31,42 @@ namespace MarketLib.src.StoreNS
 
         // 1. manager functionality:
 
-        public void acceptBidAsManager() // not neccessarily a manager, could be an owner or someone with proper permissions.
+        public int acceptBidAsManager() // not neccessarily a manager, could be an owner or someone with proper permissions.
         {
-            this.isAccepted = true;
-            this.isOpen = false;
+            if (!isOpen)
+            {
+                Console.WriteLine("this bid is closed");
+                return 0;
+            }
+            if (isAccepted)
+            {
+                Console.WriteLine("this bid was already accepted");
+                return 0;
+            }
+            this.numberOfAccepts = this.numberOfAccepts + 1;
+            if (this.numberOfAccepts == this.related_store.managerCounter)
+            {
+                // means every manager approved this bid
+                this.isAccepted = true;
+                this.isOpen = false;
+
+                int prodId = this.related_product.ProductId;
+                double price = this.related_product.Price;
+                int prevAmount = related_store.getInventory().getProductAmount(prodId);
+
+                this.related_store.changeItem(prodId, prevAmount - 1, price);
+            }
+            return 1;
+        }
+
+        public bool checkIfManager(string maybeManagerId)
+        {
+            return this.related_store.checkIfManager(maybeManagerId);
         }
 
         public void declineBidAsManager() // not neccessarily a manager, could be an owner or someone with proper permissions.
         {
-            this.isAccepted = false;
-            this.isOpen = false;
+               // really nothing to do backend-wise
         }
 
         public void giveCounterOfferAsManager(double counter_offer)
@@ -73,6 +100,11 @@ namespace MarketLib.src.StoreNS
         public Store getRelatedStore()
         {
             return related_store;
+        }
+
+        public string getRelatedBidderUsername()
+        {
+            return bidder_username;
         }
 
     }

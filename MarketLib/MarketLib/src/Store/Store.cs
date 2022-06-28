@@ -1,8 +1,8 @@
-﻿using java.util;
-using MarketLib.src.DiscountPolicies;
+﻿using MarketLib.src.DiscountPolicies;
 using MarketLib.src.PurchasePolicies;
 using MarketLib.src.UserP;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -22,8 +22,8 @@ namespace MarketLib.src.StoreNS
         private double rating;
         private string founderUserName;
         private bool isActive;
-        private int managerCounter;
-        private ConcurrentDictionary<int, User> managers;
+        public int managerCounter;
+        private ConcurrentDictionary<string, Subscriber> managers;
         private Inventory inventory = new Inventory();
         private ArrayList purchases = new ArrayList(); // arrayList<string> : purcheses
                                                        //private Observable observable;
@@ -53,13 +53,13 @@ namespace MarketLib.src.StoreNS
             this.description = description;
             this.rating = 0;
             this.founderUserName = UserName;
-            this.managers = new ConcurrentDictionary<int, User>();
+            this.managers = new ConcurrentDictionary<string, Subscriber>();
             this.managerCounter = 0;
             //this.observable = observable;
         }
 
-        public void addManager(User u) {
-            managers.TryAdd(managerCounter, u);
+        public void addManager(Subscriber u) {
+            managers.TryAdd(u.getUserName(), u);
             this.managerCounter = this.managerCounter + 1;
         }
 
@@ -160,6 +160,11 @@ namespace MarketLib.src.StoreNS
             return inventory.toString();
         }
 
+        public bool checkIfManager(string maybeManagerUserName)
+        {
+            return this.managers.ContainsKey(maybeManagerUserName);
+        }
+
         public void changeItem(int itemID, int newQuantity, double newPrice)
         {
             this.inventory.changeItemDetails(itemID, newQuantity, newPrice);
@@ -199,9 +204,9 @@ namespace MarketLib.src.StoreNS
         }
 
 
-        public void unlockItems(Set products)
+        public void unlockItems(HashSet<Product> products)
         {
-            foreach (Product p in products.toArray())
+            foreach (Product p in products)
                 p.unlockstore();
         }
 

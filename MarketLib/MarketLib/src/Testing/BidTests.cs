@@ -1,27 +1,29 @@
-﻿using System.Collections.Concurrent;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using MarketLib.src.StoreNS;
 using MarketLib.src.UserP;
 using MarketLib.src.MarketSystemNS;
 
-namespace ConsoleApp1
+
+namespace ClassLibrary1.src.Testing
 {
-    class Program
+    class BidTests
     {
-        static void Main(string[] args)
+
+        public static void main(string[] args)
         {
-            //SupplySystemImpl s = new SupplySystemImpl(new DeliveryAdapter());
-            //PaymentSystemImpl soo = new PaymentSystemImpl(new PaymentAdapter());
-            //Console.WriteLine(soo.handShake());
-            //CreditCard cred = new CreditCard("dd", "dd", "dd", "dd", "dd", "dd");
-            //Console.WriteLine(soo.pay(cred));
-            //Console.WriteLine(s.handshake());
-            //Address add = new Address("poop", "poop", "poop", "poop", "poop");
-            //Console.WriteLine(s.deliver(add));
-            
+
             Store store = new Store();
+            //StorePermission perm1 = new ManagerPermission(store);
+            //StorePermission perm2 = new OwnerPermission(store);
+            //Console.WriteLine(perm1.Equals(perm2));
+
+
+
 
             Console.WriteLine("starting test");
             ConcurrentDictionary<Product, int> products1 = new ConcurrentDictionary<Product, int>();
@@ -79,7 +81,7 @@ namespace ConsoleApp1
 
             }
 
-            int pavels_bidId = ms.bidOnItemAsBuyer("pavel", dans_store_id,"halav", 2, "dairy", "expired");
+            int pavels_bidId = ms.bidOnItemAsBuyer("pavel", dans_store_id, "halav", 2, "dairy", "expired");
             Console.WriteLine("\n pavel bid on item");
 
             ms.acceptBidAsManager("dan", pavels_bidId);
@@ -90,11 +92,22 @@ namespace ConsoleApp1
             // # Print dan's Basket
             Console.WriteLine("\n# Dan's basket:\n" + ms.getSubscriberByUserName("dan").getBasket(dans_store_id).toString());
 
-           
+            //ms.purchaseCart(conId2);
+            //Console.WriteLine("purchased cart for connection " + conId2);
 
+            // # Print dan's Basket
+            Console.WriteLine("\n# Dan's basket:\n" + ms.getSubscriberByUserName("dan").getBasket(dans_store_id).toString());
 
+            // # Print stores
+            foreach (Store s in stores)
+            {
+                Console.WriteLine("\n# Store: " + s.getName() + ", Products: ");
+                Console.WriteLine(s.toString());
+            }
 
-            Console.ReadLine();
+            Console.WriteLine("\nfinished printing stores & products");
+
+            Console.WriteLine("finished test");
 
         }
     }

@@ -47,6 +47,7 @@ namespace MarketLib.src.MarketSystemNS
             stores = new ConcurrentDictionary<int, Store>();
             //payment = new PaymentSystemImpl(new PaymentAdapter());
             supply = new SupplySystemImpl(new DeliveryAdapter());
+            bids = new ConcurrentDictionary<int, Bid>();
 
         }
 
@@ -126,11 +127,18 @@ namespace MarketLib.src.MarketSystemNS
         /// <param name="storeId">the id of the store we are adding from </param>
         /// <param name="productId"></param>
         /// <param name="amount"></param>
-        public void addItemToBasket(string connectionID, int storeId, int productId, int amount)
+        public void addItemToBasket(string connectionID, int storeId, int productId, string category, string subcategory, int amount)
         {
+            
+                
             User user = getUserByConnectionId(connectionID);
             Store store = stores[storeId];
             Product p = store.searchItemById(productId);
+            if (p.isOnlyForBids)
+            {
+                Console.WriteLine("this product is only open for bidding");
+                return;
+            }
             user.getBasket(storeId).addProduct(p, amount);
         }
 
@@ -225,6 +233,7 @@ namespace MarketLib.src.MarketSystemNS
             Store newStore = new Store(storeCounter, newStoreName, username);
             user.addOwnerPermission(newStore);
             stores.TryAdd(storeCounter,newStore);
+            newStore.addManager(user);
             int current = storeCounter;
             Interlocked.Increment(ref storeCounter);
             return current;
@@ -245,6 +254,7 @@ namespace MarketLib.src.MarketSystemNS
             Subscriber appointed = getSubscriberByUserName(assigneeUserName);
             Store s = stores[storeId];
             user.addManagerPermission(appointed, s);
+            s.addManager(user);
         }
 
         /// <summary>
@@ -262,38 +272,154 @@ namespace MarketLib.src.MarketSystemNS
 
         // start bid functionality
 
-            // For 28.06: 
-            // 1. finish acceptBidAsManager, declineBidAsMAnager, counterOfferAsManager, acceptCounterOfferAsBuyer, declineCounterOfferAsBuyr
-            // 2. build the approval functionality, where everyone needs to accept so bid will be approved.
-            // 3. Testing 
-            // 4. Git and it is finished
+        // For 28.06: 
+        // 1. finish counterOfferAsManager, acceptCounterOfferAsBuyer, declineCounterOfferAsBuyr
+        // 2. build the approval functionality, where everyone needs to accept so bid will be approved.
+        // 3. Testing 
+        // 4. Git and it is finished
 
-        public void bidOnItemAsBuyer(string connectionId, string storeId, string product_name, double price, string category, string subcat) {
-            if (price < 0 || stores[storeId] == null || members[connectionId] == null)
-                return;
-
-            User u = getUserByConnectionId(connectionId);
+        /// <summary>
+        /// bid on item as a buyer.
+        /// </summary>
+        /// <returns>return the added bid ID</returns>
+        public int bidOnItemAsBuyer(string username, int storeId, string product_name, double price, string category, string subcat) {
+            if (price < 0 || stores[storeId] == null || members[username] == null)
+                return -1;
+            
+            Subscriber u = getSubscriberByUserName(username);
             Store s = stores[storeId];
             Product p = s.getItem(product_name,category,subcat);
 
-            Bid b = new Bid(s,p,price,connectionId);
+            Bid b = new Bid(s,p,price, username);
 
             bids.TryAdd(bidCounter,b);
             this.bidCounter = this.bidCounter + 1;
 
+            return bidCounter - 1;
         }
 
-        public void acceptBidAsManager(string connectionId, int bidId){ // bidId is the int in the <int, Bid> dictionary (bids).
-            User manager = getUserByConnectionId(connectionId);
+        public Bid getBid(int bidId)
+        {
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+                return null;
+            return this.bids[bidId];
+        }
+
+        /// <summary>
+        /// accept buyer's bid as a manager (bid is only approved when every manager accepted it)
+        /// </summary>
+        public void acceptBidAsManager(string username, int bidId){ // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+
+            // Check if connectionId belongs to an actual manager of the stores
+            if (!bids[bidId].related_store.checkIfManager(username))
+            {
+                Console.WriteLine("subscriber " + username + " is not a manager of store " + bids[bidId].related_store.getName());
+                return;
+            }
+
+            User manager = getSubscriberByUserName(username);
 
             Bid b = bids[bidId];
 
             Store related_store_to_bid = b.getRelatedStore();
 
+            int ret = b.acceptBidAsManager();
 
+            if (ret == 1)
+            {
+                // means bid was finally approved (by all managers)
+
+                // final validation by buyer
+
+                // complete user payment for b.related_product.Price ?
+
+
+                bids[bidId] = null;
+            }
+        }
+
+        /// <summary>
+        /// declines buyer's bid as a manager 
+        /// </summary>
+        public void declineBidAsManager(string connectionId, int bidId)
+        { // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
 
             // Check if connectionId belongs to an actual manager of the stores
-        }   
+            if (!bids[bidId].related_store.checkIfManager(connectionId))
+            {
+                Console.WriteLine("connection " + connectionId + " is not a manager of store " + bids[bidId].related_store.getName());
+                return;
+            }
+
+            User manager = getUserByConnectionId(connectionId);
+
+            Bid b = bids[bidId];
+
+            b.declineBidAsManager();
+        }
+
+        /// <summary>
+        /// gives bid a counter offer as a manager 
+        /// </summary>
+        public void counterOfferAsManager(string connectionId, int bidId, double newPrice)
+        {
+            // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+
+            // Check if connectionId belongs to an actual manager of the stores
+            if (!bids[bidId].related_store.checkIfManager(connectionId))
+            {
+                Console.WriteLine("connection " + connectionId + " is not a manager of store " + bids[bidId].related_store.getName());
+                return;
+            }
+
+            User manager = getUserByConnectionId(connectionId);
+
+            Bid b = bids[bidId];
+
+            b.giveCounterOfferAsManager(newPrice);
+
+        }
+
+        public void acceptCounterOfferAsBuyer(string connectionId, int bidId)
+        {
+            // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+            Bid b = bids[bidId];
+            b.acceptCounterOfferAsBuyer();
+
+        }
+        public void declineCounterOfferAsBuyer(string connectionId, int bidId)
+        {
+            // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+            Bid b = bids[bidId];
+            b.acceptCounterOfferAsBuyer();
+
+        }
+
 
         // end bid functionality
 
@@ -325,6 +451,7 @@ namespace MarketLib.src.MarketSystemNS
             Subscriber user = getSubscriberByUserName(username);
             Store s = stores[storeId];
             user.addOwnerPermission(s);
+            s.addManager(user);
         }
 
         public void giveManagerUpdateProductsPermmission(string username, int storeId, string managerUserName)
@@ -333,6 +460,7 @@ namespace MarketLib.src.MarketSystemNS
             Subscriber target = getSubscriberByUserName(managerUserName);
             Store s = stores[storeId];
             user.addInventoryManagementPermission(target, s);
+            s.addManager(getSubscriberByUserName(managerUserName));
         }
 
         public void takeManagerUpdatePermmission(string username, int storeId, string managerUserName)

@@ -1,10 +1,10 @@
 ﻿using MarketLib.src.StorePermission;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using java.util.concurrent;
 using System.Collections;
 using System.Threading;
 using MarketLib.src.StoreNS;
@@ -18,7 +18,7 @@ namespace MarketLib.src.UserP
         private static int atomicNum;
         private string userName;
         private HashSet<StorePermission.StorePermission> permissions; // synchronized manually
-        private ConcurrentHashMap itemsPurchased; // k: store v: arrylist<product>
+        private ConcurrentDictionary<int ,Product> itemsPurchased; // k: store v: arrylist<product>
         private ArrayList purchaseHistory;
 
         public Subscriber(string userName)
@@ -26,13 +26,13 @@ namespace MarketLib.src.UserP
             this.id = Interlocked.Increment(ref atomicNum);
             this.userName = userName;
             this.permissions = new HashSet<StorePermission.StorePermission>();
-            this.itemsPurchased = new ConcurrentHashMap();// k: store v: arrylist<product>
+            this.itemsPurchased = new ConcurrentDictionary<int, Product>();// k: store v: arrylist<product>
             this.purchaseHistory = new ArrayList();
 
             //  this.notifications = new ArrayList<>();
         }
 
-        public Subscriber(string userName, HashSet<StorePermission.StorePermission> permissions, ConcurrentHashMap itemsPurchased, ArrayList purchaseHistory)
+        public Subscriber(string userName, HashSet<StorePermission.StorePermission> permissions, ConcurrentDictionary<int, Product> itemsPurchased, ArrayList purchaseHistory)
         {
             this.id = Interlocked.Increment(ref atomicNum);
             this.userName = userName;
@@ -51,7 +51,6 @@ namespace MarketLib.src.UserP
         {
             return this;
         }
-
 
 
 
