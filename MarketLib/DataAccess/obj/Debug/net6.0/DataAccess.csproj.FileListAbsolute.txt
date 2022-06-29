@@ -1,0 +1,10 @@
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.csproj.AssemblyReference.cache
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.AssemblyInfoInputs.cache
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.AssemblyInfo.cs
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.csproj.AssemblyReference.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.AssemblyInfoInputs.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.AssemblyInfo.cs
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\MarketLib\DataAccess\obj\Debug\net6.0\DataAccess.csproj.CoreCompileInputs.cache

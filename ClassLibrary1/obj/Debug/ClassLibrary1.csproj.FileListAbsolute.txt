@@ -4,3 +4,9 @@ C:\Users\Dan\source\repos\ConsoleApp5\ClassLibrary1\bin\Debug\ClassLibrary1.dll
 C:\Users\Dan\source\repos\ConsoleApp5\ClassLibrary1\bin\Debug\ClassLibrary1.pdb
 C:\Users\Dan\source\repos\ConsoleApp5\ClassLibrary1\obj\Debug\ClassLibrary1.dll
 C:\Users\Dan\source\repos\ConsoleApp5\ClassLibrary1\obj\Debug\ClassLibrary1.pdb
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ClassLibrary1\bin\Debug\ClassLibrary1.dll
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ClassLibrary1\bin\Debug\ClassLibrary1.pdb
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ClassLibrary1\obj\Debug\ClassLibrary1.csproj.AssemblyReference.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ClassLibrary1\obj\Debug\ClassLibrary1.csproj.CoreCompileInputs.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ClassLibrary1\obj\Debug\ClassLibrary1.dll
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ClassLibrary1\obj\Debug\ClassLibrary1.pdb

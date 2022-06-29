@@ -17,6 +17,5 @@ namespace MarketLib.src.StoreNS
             this.username = username;
             this.stars = stars;
         }
-        public Review(){}
     }
 }
