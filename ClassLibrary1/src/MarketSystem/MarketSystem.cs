@@ -5,6 +5,7 @@ using MarketLib.src.Security;
 using MarketLib.src.StoreNS;
 using MarketLib.src.UserP;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,10 @@ namespace MarketLib.src.MarketSystemNS
         private ConcurrentDictionary<string, User> connections;
         private ConcurrentDictionary<string, Subscriber> members;
         private ConcurrentDictionary<int, Store> stores; // key: store id
-        private ConcurrentDictionary<int, Bid> bids; // key: bidCounter
+        ConcurrentDictionary<int, Bid> bids; // key: bidCounter
+        ConcurrentDictionary<int, Auction> auctions; // key: auctionCounter
         private int bidCounter = 0;
+        private int auctionCounter = 0;
         private int storeCounter = 0;
         private ItemSearchManager search = new ItemSearchManager();
         private UserSecurity usersecure = new UserSecurity();
@@ -29,7 +32,12 @@ namespace MarketLib.src.MarketSystemNS
         private int counterId = 0;
         private PaymentSystem payment;
         private SupplySystem supply;
-        
+        public const int REGULAR_SELL = 0;
+        public const int BID_SELL = 1;
+        public const int AUCTION_SELL = 2;
+        public const int LOTTERY_SELL = 3;
+
+
 
 
         public Subscriber getSubscriberByUserName(string userName)
@@ -39,6 +47,15 @@ namespace MarketLib.src.MarketSystemNS
             return subscriber;
         }
 
+        public void removeBid(int bidId)
+        {
+            this.bids.TryRemove(bidId, out _);
+        }
+
+        public void removeAuction(int aucId)
+        {
+            this.auctions.TryRemove(aucId, out _);
+        }
 
         public MarketSystem()
         {
@@ -47,7 +64,8 @@ namespace MarketLib.src.MarketSystemNS
             stores = new ConcurrentDictionary<int, Store>();
             //payment = new PaymentSystemImpl(new PaymentAdapter());
             supply = new SupplySystemImpl(new DeliveryAdapter());
-
+            bids = new ConcurrentDictionary<int, Bid>();
+            auctions = new ConcurrentDictionary<int, Auction>();
         }
 
 
@@ -126,11 +144,18 @@ namespace MarketLib.src.MarketSystemNS
         /// <param name="storeId">the id of the store we are adding from </param>
         /// <param name="productId"></param>
         /// <param name="amount"></param>
-        public void addItemToBasket(string connectionID, int storeId, int productId, int amount)
+        public void addItemToBasket(string connectionID, int storeId, int productId, string category, string subcategory, int amount)
         {
+            
+                
             User user = getUserByConnectionId(connectionID);
             Store store = stores[storeId];
             Product p = store.searchItemById(productId);
+            if (p.mode == BID_SELL)
+            {
+                Console.WriteLine("this product is only open for bidding");
+                return;
+            }
             user.getBasket(storeId).addProduct(p, amount);
         }
 
@@ -225,6 +250,7 @@ namespace MarketLib.src.MarketSystemNS
             Store newStore = new Store(storeCounter, newStoreName, username);
             user.addOwnerPermission(newStore);
             stores.TryAdd(storeCounter,newStore);
+            newStore.addManager(user);
             int current = storeCounter;
             Interlocked.Increment(ref storeCounter);
             return current;
@@ -245,6 +271,7 @@ namespace MarketLib.src.MarketSystemNS
             Subscriber appointed = getSubscriberByUserName(assigneeUserName);
             Store s = stores[storeId];
             user.addManagerPermission(appointed, s);
+            s.addManager(user);
         }
 
         /// <summary>
@@ -260,42 +287,266 @@ namespace MarketLib.src.MarketSystemNS
         /// <param name="price"></param>
         /// 
 
+        public Store getStore(int storeId)
+        {
+            if (!stores.ContainsKey(storeId) || stores[storeId] == null)
+                return null;
+            return this.stores[storeId];
+        }
+
         // start bid functionality
 
-        // For 28.06: 
-        // 1. finish acceptBidAsManager, declineBidAsMAnager, counterOfferAsManager, acceptCounterOfferAsBuyer, declineCounterOfferAsBuyr
-        // 2. build the approval functionality, where everyone needs to accept so bid will be approved.
-        // 3. Testing 
-        // 4. Git and it is finished
-
-        /*public void bidOnItemAsBuyer(string connectionId, string storeId, string product_name, double price, string category, string subcat) {
-            if (price < 0 || stores[storeId] == null || members[connectionId] == null)
-                return;
-
-            User u = getUserByConnectionId(connectionId);
+        /// <summary>
+        /// bid on item as a buyer.
+        /// </summary>
+        /// <returns>return the added bid ID</returns>
+        public int bidOnItemAsBuyer(string username, int storeId, string product_name, double price, string category, string subcat) {
+            if (price < 0 || stores[storeId] == null || members[username] == null || !(stores[storeId].getItem(product_name,category,subcat).mode == BID_SELL))
+                return -1;
+            
+            Subscriber u = getSubscriberByUserName(username);
             Store s = stores[storeId];
             Product p = s.getItem(product_name,category,subcat);
 
-            Bid b = new Bid(s,p,price,connectionId);
+            Bid b = new Bid(s,p,price, username);
 
             bids.TryAdd(bidCounter,b);
             this.bidCounter = this.bidCounter + 1;
 
+            return bidCounter - 1;
         }
 
-        public void acceptBidAsManager(string connectionId, int bidId){ // bidId is the int in the <int, Bid> dictionary (bids).
-            User manager = getUserByConnectionId(connectionId);
+        /// <summary>
+        /// get a specific bid from all existing bids in marketSystem.
+        /// </summary>
+        /// <returns>return the bid with id number bidId</returns>
+        public Bid getBid(int bidId)
+        {
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+                return null;
+            return this.bids[bidId];
+        }
+
+        /// <summary>
+        /// accept buyer's bid as a manager (bid is only approved when every manager accepted it)
+        /// </summary>
+        public void acceptBidAsManager(string username, int bidId){ // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+
+            // Check if connectionId belongs to an actual manager of the stores
+            if (!bids[bidId].related_store.checkIfManager(username))
+            {
+                Console.WriteLine("subscriber " + username + " is not a manager of store " + bids[bidId].related_store.getName());
+                return;
+            }
+
+            Subscriber manager = getSubscriberByUserName(username);
 
             Bid b = bids[bidId];
 
             Store related_store_to_bid = b.getRelatedStore();
 
+            if (!manager.havePermission(new StorePermission.ManagerPermission(related_store_to_bid)))
+            {
+                Console.WriteLine("\nerror - subscriber " + username + " doesnt have permissions to store " +related_store_to_bid.getName());
+                return;
+            }
 
+            int ret = b.acceptBidAsManager();
+
+            if (ret == 1)
+            {
+                // means bid was finally approved (by all managers)
+
+                ConcurrentDictionary<Product, int> dict = new ConcurrentDictionary<Product, int>();
+                dict.TryAdd(b.related_product, 0);
+                PurchaseRecord purchaseDetails = new PurchaseRecord(dict, DateTime.Now.ToString("dd-MM-yyyy"), b.currrent_price);
+
+                // complete user payment for b.related_product.Price ?
+
+
+                bids[bidId] = null;
+            }
+        }
+
+        /// <summary>
+        /// declines buyer's bid as a manager 
+        /// </summary>
+        public void declineBidAsManager(string username, int bidId)
+        { // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null || !bids[bidId].isOpen)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved/declined");
+                return;
+            }
 
             // Check if connectionId belongs to an actual manager of the stores
-        }   */
+            if (!bids[bidId].related_store.checkIfManager(username))
+            {
+                Console.WriteLine("user " + username + " is not a manager of store " + bids[bidId].related_store.getName());
+                return;
+            }
+
+            Subscriber manager = getSubscriberByUserName(username);
+
+            Bid b = bids[bidId];
+            Bid tmp = new Bid();
+            Store related_store_to_bid = b.getRelatedStore();
+
+            if (!manager.havePermission(new StorePermission.ManagerPermission(related_store_to_bid)))
+            {
+                Console.WriteLine("\nerror - subscriber " + username + " doesnt have permissions to store " + related_store_to_bid.getName());
+                return;
+            }
+
+            b.declineBidAsManager();
+            this.bids[bidId] = null;
+            removeBid(bidId);
+
+            Console.WriteLine("bid " + bidId + " was declined by " + username);
+        }
+
+        /// <summary>
+        /// gives bid a counter offer as a manager 
+        /// </summary>
+        public void counterOfferAsManager(string username, int bidId, double newPrice)
+        {
+            // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+
+            // Check if connectionId belongs to an actual manager of the stores
+            if (!bids[bidId].related_store.checkIfManager(username))
+            {
+                Console.WriteLine("\nerror - user " + username + " is not a manager of store " + bids[bidId].related_store.getName());
+                return;
+            }
+
+            Subscriber manager = getSubscriberByUserName(username);
+
+            Bid b = bids[bidId];
+            Store related_store_to_bid = b.getRelatedStore();
+
+            if (!manager.havePermission(new StorePermission.ManagerPermission(related_store_to_bid)))
+            {
+                Console.WriteLine("\nerror - subscriber " + username + " doesnt have permissions to store " + related_store_to_bid.getName());
+                return;
+            }
+            b.giveCounterOfferAsManager(newPrice);
+
+        }
+
+        public void acceptCounterOfferAsBuyer(string connectionId, int bidId)
+        {
+            // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+            Bid b = bids[bidId];
+            b.acceptCounterOfferAsBuyer();
+            removeBid(bidId);
+            ConcurrentDictionary<Product, int> dict = new ConcurrentDictionary<Product, int>();
+            dict.TryAdd(b.related_product, 0);
+            PurchaseRecord purchaseDetails = new PurchaseRecord(dict, DateTime.Now.ToString("dd-MM-yyyy"), b.currrent_price);
+        }
+        public void declineCounterOfferAsBuyer(string connectionId, int bidId)
+        {
+            // bidId is the int in the <int, Bid> dictionary (bids).
+            if (!bids.ContainsKey(bidId) || bids[bidId] == null)
+            {
+                Console.WriteLine("bid " + bidId + " does not exist in bids, or was already approved");
+                return;
+            }
+            Bid b = bids[bidId];
+            b.acceptCounterOfferAsBuyer();
+            removeBid(bidId);
+
+        }
+
 
         // end bid functionality
+
+        // start auction functionality
+
+        /// <summary>
+        /// create an auction on an item as a store manager.
+        /// </summary>
+        /// <returns>return the added auction ID</returns>
+        public int createAuction(string username, int storeId, Product related_product, double initial_price, int longevityInDays)
+        {
+            if (!getSubscriberByUserName(username).havePermission(new StorePermission.ManagerPermission(getStore(storeId))))
+            {
+                Console.WriteLine("\nerror - subscriber " + username + " doesnt have permissions to store " + getStore(storeId).getName());
+                return -1;
+            }
+            related_product.setProductAsAuctionOnly();
+            Auction a = new Auction(related_product,initial_price,longevityInDays);
+            auctions.TryAdd(auctionCounter, a);
+            auctionCounter = auctionCounter + 1;
+            return auctionCounter - 1;
+        }
+
+        public Auction getAuction(int auctionId)
+        {
+            if (!auctions.ContainsKey(auctionId) || auctions[auctionId] == null)
+                return null;
+            return auctions[auctionId];
+        }
+
+        public void BidOnAuctionAsBuyer(string username, double price, int auctionId)
+        {
+            Auction a = getAuction(auctionId);
+            a.BidOnProductAsBuyer(username, price);
+        }
+
+        public bool isAuctionExpired(int auctionId, DateTime currDate)
+        {
+            return getAuction(auctionId).isAuctionExpired(currDate);
+        }
+
+        public void resolveAllAuctions(DateTime currDate)
+        {
+            
+            for (int i=0; i<auctionCounter; i++)
+            {
+                if (auctions[i].isAuctionExpired(currDate)) {
+
+                    // TO-DO: complete payments for this auction
+
+                    removeAuction(i);
+
+                }
+
+            }
+        }
+
+        public void resolveAllAuctions()
+        {
+            DateTime currDate = DateTime.Now;
+            for (int i = 0; i < auctionCounter; i++)
+            {
+                if (auctions[i].isAuctionExpired(currDate))
+                {
+
+                    // TO-DO: complete payments for this auction
+
+                    removeAuction(i);
+
+                }
+
+            }
+        }
+
+        // end auction functionality
 
         public int addProductToStore(string username, int storeId, string productName, string category, string subCategory,
          int quantity, double price)
@@ -325,6 +576,7 @@ namespace MarketLib.src.MarketSystemNS
             Subscriber user = getSubscriberByUserName(username);
             Store s = stores[storeId];
             user.addOwnerPermission(s);
+            s.addManager(user);
         }
 
         public void giveManagerUpdateProductsPermmission(string username, int storeId, string managerUserName)
@@ -333,6 +585,7 @@ namespace MarketLib.src.MarketSystemNS
             Subscriber target = getSubscriberByUserName(managerUserName);
             Store s = stores[storeId];
             user.addInventoryManagementPermission(target, s);
+            s.addManager(getSubscriberByUserName(managerUserName));
         }
 
         public void takeManagerUpdatePermmission(string username, int storeId, string managerUserName)

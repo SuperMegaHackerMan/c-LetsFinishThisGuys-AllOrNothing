@@ -11,7 +11,7 @@ namespace MarketLib.src.StorePermission
     {
         protected Store store;
 
-        protected StorePermission(Store store)
+        public StorePermission(Store store)
         {
             this.store = store;
         }
