@@ -10,6 +10,11 @@ namespace DataAccess.DataTransferObjects
     {
         private int storeid;
         private ConcurrentDictionary<ProductDTO, int> products; 
-        public ConcurrentDictionary<ProductDTO, int> Products;
+
+        public BasketDTO(int storeid, ConcurrentDictionary<ProductDTO, int> products)
+        {
+            this.stored = storeid;
+            this.products = products;
+        }
     }
 }

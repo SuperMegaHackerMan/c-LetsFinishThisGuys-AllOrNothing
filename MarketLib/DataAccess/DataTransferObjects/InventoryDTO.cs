@@ -8,5 +8,7 @@ namespace DataAccess.DataTransferObjects
 {
     internal class InventoryDTO
     {
+        private Dictionary<ProductDTO, int> products; 
+        private int idpatcher;
     }
 }
