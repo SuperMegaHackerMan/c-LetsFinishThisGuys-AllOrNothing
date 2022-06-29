@@ -8,3 +8,14 @@ C:\Users\Dan\source\repos\ConsoleApp5\ConsoleApp5\bin\Debug\ClassLibrary1.pdb
 C:\Users\Dan\source\repos\ConsoleApp5\ConsoleApp5\obj\Debug\ConsoleApp5.csproj.CopyComplete
 C:\Users\Dan\source\repos\ConsoleApp5\ConsoleApp5\obj\Debug\ConsoleApp5.exe
 C:\Users\Dan\source\repos\ConsoleApp5\ConsoleApp5\obj\Debug\ConsoleApp5.pdb
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\bin\Debug\ConsoleApp5.exe.config
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\bin\Debug\ConsoleApp5.exe
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\bin\Debug\ConsoleApp5.pdb
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\bin\Debug\ClassLibrary1.dll
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\bin\Debug\ClassLibrary1.pdb
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\obj\Debug\ConsoleApp5.csproj.AssemblyReference.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\obj\Debug\ConsoleApp5.csproj.SuggestedBindingRedirects.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\obj\Debug\ConsoleApp5.csproj.CoreCompileInputs.cache
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\obj\Debug\ConsoleApp5.csproj.CopyComplete
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\obj\Debug\ConsoleApp5.exe
+C:\Users\nimro\Desktop\pullToMerge\c-LetsFinishThisGuys-AllOrNothing\ConsoleApp5\obj\Debug\ConsoleApp5.pdb

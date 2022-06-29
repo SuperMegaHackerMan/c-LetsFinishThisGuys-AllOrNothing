@@ -1,0 +1,3 @@
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\MarketLib\obj\Debug\netstandard2.0\MarketLib.csproj.AssemblyReference.cache
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\MarketLib\obj\Debug\netstandard2.0\MarketLib.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nimro\Desktop\AfterGitignorePush\MarketLib\MarketLib\obj\Debug\netstandard2.0\MarketLib.csproj.CoreCompileInputs.cache
