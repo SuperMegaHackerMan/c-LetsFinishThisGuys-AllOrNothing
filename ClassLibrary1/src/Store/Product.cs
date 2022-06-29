@@ -14,6 +14,9 @@ namespace MarketLib.src.StoreNS
         private double price;
         private Review review;
         private int storeid;
+        private string typeOfSale;
+        public int mode; // 0 == REGULAR , 1 == BID-ONLY , 2 == AUCTION , 3 == LOTTERY
+
 
 
         private string category;
@@ -22,21 +25,42 @@ namespace MarketLib.src.StoreNS
         private double rating;
         private bool Opened = true;
 
-        public Product(int pid, string name, double price, string category, double rating)
+        public Product(int pid, string name, double price, string category, double rating, int mode=0)
         {
             this.pId = pid;
             this.pName = name;
             this.price = price;
             this.category = category;
             this.rating = rating;
+            this.mode = mode;
         }
 
         public Product()
         {
         }
+        public void setProductAsRegularBuyMode()
+        {
+            this.typeOfSale = "Regular";
+            this.mode = 0;
+        }
+        public void setProductAsBidOnly()
+        {
+            this.typeOfSale = "Bid-only";
+            this.mode = 1;
+        }
+        public void setProductAsAuctionOnly()
+        {
+            this.typeOfSale = "Auction";
+            this.mode = 2;
+        }
+        public void setProductAsLotteryOnly()
+        {
+            this.typeOfSale = "Lottery";
+            this.mode = 3;
+        }
 
         public override string ToString(){ 
-            return "\tProduct name: "+pName+", price: "+price;
+            return "\tProduct name: "+pName+", price: "+price+", type of sale: "+ typeOfSale;
         }
 
         public int ProductId

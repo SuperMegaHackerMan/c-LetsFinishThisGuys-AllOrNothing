@@ -54,7 +54,6 @@ namespace MarketLib.src.UserP
 
 
 
-
         //
         private void addPermission(StorePermission.StorePermission permission)
         {

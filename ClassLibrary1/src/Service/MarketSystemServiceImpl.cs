@@ -38,6 +38,35 @@ namespace MarketLib.src.Service
             market.logout(username);
         }
 
+        public int bidOnItemAsBuyer(string connectionId, int storeId, string product_name, double price, string category, string subcat)
+        {
+            return market.bidOnItemAsBuyer(connectionId, storeId, product_name, price, category, subcat);
+        }
+
+        public void acceptBidAsManager(string connectionId, int bidId)
+        {
+            market.acceptBidAsManager(connectionId, bidId);
+        }
+
+        public void declineBidAsManager(string connectionId, int bidId)
+        {
+            market.acceptBidAsManager(connectionId, bidId);
+        }
+
+        public void counterOfferAsManager(string connectionId, int bidId, double newPrice)
+        {
+            market.counterOfferAsManager(connectionId, bidId, newPrice);
+        }
+
+        public void acceptCounterOfferAsBuyer(string connectionId, int bidId)
+        {
+            market.acceptCounterOfferAsBuyer(connectionId, bidId);
+        }
+
+        public void declineCounterOfferAsBuyer(string connectionId, int bidId)
+        {
+            market.declineCounterOfferAsBuyer(connectionId, bidId);
+        }
 
         public int openNewStore(string username, string newStoreName)
         {
